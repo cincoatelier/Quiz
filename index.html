@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qual é o teu estilo de decoração? — Cinco Atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#000000;
+    --paper:#F6F1E7;
+    --paper-dim:#EFE8D8;
+    --line:#8FB2BE;
+    --line-dim:#3A4A52;
+    --clay:#BD5B38;
+    --clay-dark:#9C4A2C;
+    --olive:#7C8355;
+    --card:#141414;
+    --card-line:rgba(246,241,231,0.14);
+    --text:#F1ECE2;
+    --text-soft:#9A968D;
+    --muted:#8CA0A8;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    color:var(--paper);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  .app{
+    width:100%;
+    max-width:560px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+
+  .app::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line-dim) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-dim) 1px, transparent 1px);
+    background-size:28px 28px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  header.topbar{
+    position:relative;
+    z-index:1;
+    padding:20px 24px 0 24px;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--line);
+    text-transform:uppercase;
+  }
+
+  main{
+    position:relative;
+    z-index:1;
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:24px;
+  }
+
+  .screen{display:none; flex:1; flex-direction:column;}
+  .screen.active{display:flex;}
+
+  /* ---- INTRO ---- */
+  #intro{justify-content:center; text-align:left; padding-bottom:40px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--clay);
+    margin-bottom:18px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:clamp(34px, 9vw, 46px);
+    line-height:1.08;
+    margin:0 0 20px 0;
+    color:var(--paper);
+  }
+  h1 em{ font-style:italic; font-weight:500; color:var(--line); }
+  .lede{
+    font-size:16px;
+    line-height:1.6;
+    color:#C9CDCB;
+    max-width:44ch;
+    margin:0 0 32px 0;
+  }
+  .meta-row{
+    display:flex;
+    gap:22px;
+    margin-bottom:36px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--line);
+  }
+  .meta-row span{display:block;}
+  .meta-row b{display:block; font-size:15px; color:var(--paper); font-weight:500; margin-top:2px;}
+
+  button{ font-family:'Work Sans', sans-serif; cursor:pointer; border:none; background:none; }
+
+  .btn-start{
+    align-self:flex-start;
+    background:var(--clay);
+    color:var(--paper);
+    font-size:16px;
+    font-weight:600;
+    padding:16px 30px;
+    border-radius:2px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    transition:background 0.15s ease, transform 0.15s ease;
+  }
+  .btn-start:hover{background:var(--clay-dark); transform:translateY(-1px);}
+  .btn-start:focus-visible{outline:2px solid var(--paper); outline-offset:3px;}
+  .btn-start svg{width:16px; height:16px;}
+
+  .link-quiet{
+    margin-top:18px;
+    align-self:flex-start;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--muted);
+    border-bottom:1px solid var(--line-dim);
+    padding-bottom:2px;
+  }
+  .link-quiet:hover{color:var(--line); border-bottom-color:var(--line);}
+
+  /* ---- SCALE / PROGRESS ---- */
+  .scale{
+    display:flex;
+    align-items:flex-end;
+    gap:0;
+    margin-bottom:34px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--line-dim);
+  }
+  .tick{ flex:1; height:10px; border-left:1px solid var(--line-dim); position:relative; }
+  .tick:last-child{border-right:1px solid var(--line-dim);}
+  .tick.done{border-left-color:var(--clay);}
+  .tick.done::after{
+    content:""; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--clay);
+  }
+
+  /* ---- QUESTION (part 1) ---- */
+  .q-index{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    color:var(--clay);
+    letter-spacing:0.08em;
+    margin-bottom:10px;
+  }
+  .q-text{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:26px;
+    line-height:1.25;
+    color:var(--paper);
+    margin:0 0 26px 0;
+    max-width:26ch;
+  }
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .option{
+    background:var(--card);
+    border:1px solid var(--card-line);
+    border-radius:2px;
+    padding:16px 16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    text-align:left;
+    color:var(--text);
+    font-size:15px;
+    line-height:1.4;
+    width:100%;
+    transition:transform 0.12s ease;
+  }
+  .option:hover{transform:translateX(3px);}
+  .option:focus-visible{outline:2px solid var(--clay); outline-offset:2px;}
+  .swatch{ width:20px; height:20px; min-width:20px; border-radius:50%; border:1px solid rgba(246,241,231,0.2); }
+  .option-text b{display:block; font-weight:600; color:var(--text);}
+
+  .nav-row{ margin-top:24px; display:flex; justify-content:space-between; align-items:center; }
+  .btn-back{
+    background:transparent; color:var(--line);
+    font-family:'IBM Plex Mono', monospace; font-size:12px;
+    letter-spacing:0.05em; text-transform:uppercase; padding:8px 4px;
+  }
+  .btn-back:disabled{opacity:0.25; cursor:default;}
+  .btn-back:not(:disabled):hover{color:var(--paper);}
+
+  /* ---- HINT TEXT ---- */
+  .part2-hint{
+    font-size:13.5px;
+    color:#AEB4B0;
+    margin:-14px 0 4px 0;
+  }
+  .btn-primary{
+    align-self:flex-start;
+    background:var(--clay);
+    color:var(--paper);
+    font-size:15px;
+    font-weight:600;
+    padding:14px 26px;
+    border-radius:2px;
+    transition:background 0.15s ease, opacity 0.15s ease;
+  }
+  .btn-primary:hover{background:var(--clay-dark);}
+  .btn-primary:disabled{ opacity:0.35; cursor:default; }
+
+  /* ---- CONTACT ---- */
+  #contact .q-text{ max-width:24ch; }
+  .field{ margin-bottom:16px; }
+  .field label{
+    display:block;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--line);
+    margin-bottom:6px;
+  }
+  .field input{
+    width:100%;
+    background:var(--card);
+    border:1px solid var(--card-line);
+    border-radius:2px;
+    padding:13px 14px;
+    font-family:'Work Sans', sans-serif;
+    font-size:15px;
+    color:var(--text);
+  }
+  .field input:focus-visible{ outline:2px solid var(--clay); }
+  .field input::placeholder{ color:var(--text-soft); opacity:1; }
+  .field-optional{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--muted); margin-left:6px; text-transform:none; letter-spacing:0; }
+
+  /* ---- RESULT ---- */
+  .result-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--clay); margin-bottom:14px;
+  }
+  .result-title{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:clamp(32px, 8vw, 42px);
+    line-height:1.05;
+    color:var(--paper);
+    margin:0 0 18px 0;
+  }
+  .result-desc{
+    font-size:15.5px; line-height:1.65; color:#CBCFCD;
+    max-width:48ch; margin:0 0 26px 0;
+  }
+  .board{ background:var(--card); border:1px solid var(--card-line); border-radius:3px; padding:22px; margin-bottom:26px; }
+  .board-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--text-soft); margin-bottom:14px;
+  }
+  .chips{ display:flex; gap:10px; flex-wrap:wrap; }
+  .chip{ width:46px; height:46px; border-radius:50%; border:1px solid rgba(246,241,231,0.2); flex:none; }
+  .traits{ margin:16px 0 0 0; padding:0; list-style:none; display:flex; flex-wrap:wrap; gap:8px; }
+  .traits li{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text);
+    border:1px solid var(--card-line); padding:5px 10px; border-radius:20px;
+  }
+  .cta-box{ background:transparent; border:1px solid var(--line-dim); border-radius:3px; padding:20px; margin-bottom:18px; }
+  .cta-box p{ margin:0 0 4px 0; font-size:14px; line-height:1.55; color:#C9CDCB; }
+  .cta-box .cta-price{ font-family:'IBM Plex Mono', monospace; color:var(--clay); font-weight:500; }
+  .btn-cta{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    background:var(--clay);
+    color:var(--paper);
+    text-decoration:none;
+    font-size:14.5px;
+    font-weight:600;
+    padding:13px 22px;
+    border-radius:2px;
+    margin-top:14px;
+    transition:background 0.15s ease, transform 0.15s ease;
+  }
+  .btn-cta:hover{ background:var(--clay-dark); transform:translateY(-1px); }
+  .btn-cta:focus-visible{ outline:2px solid var(--paper); outline-offset:3px; }
+  .btn-cta svg{ width:15px; height:15px; }
+  .save-note{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    color:var(--muted);
+    margin:-10px 0 22px 0;
+  }
+  .btn-restart{
+    align-self:flex-start; background:transparent; color:var(--line);
+    font-family:'IBM Plex Mono', monospace; font-size:12px;
+    letter-spacing:0.05em; text-transform:uppercase; padding:10px 0;
+    border-bottom:1px solid var(--line-dim);
+  }
+  .btn-restart:hover{ color:var(--paper); border-bottom-color:var(--paper); }
+
+  /* ---- DASHBOARD (equipa) ---- */
+  #dashboard .q-text{ max-width:none; font-size:22px; }
+  .dash-table{ display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .dash-row{
+    background:var(--card); border:1px solid var(--card-line); border-radius:3px; padding:14px 16px;
+    font-size:13px; color:var(--text);
+  }
+  .dash-row .dash-top{ display:flex; justify-content:space-between; gap:10px; margin-bottom:4px; }
+  .dash-row b{ font-family:'Fraunces', serif; font-size:16px; }
+  .dash-row .dash-meta{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-soft); }
+  .dash-empty{ color:#AEB4B0; font-size:14px; margin-bottom:20px; }
+
+  footer{
+    position:relative; z-index:1; padding:16px 24px 22px 24px;
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--muted); text-align:left;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <span>Cinco Atelier</span>
+    <span id="topbar-progress">Teste de estilo</span>
+  </header>
+
+  <main>
+
+    <!-- INTRO -->
+    <section id="intro" class="screen active">
+      <div class="eyebrow">Teste de estilo · 8 perguntas · 2 minutos</div>
+      <h1>Qual é o <em>estilo</em><br>da tua casa?</h1>
+      <p class="lede">Antes de desenhar um espaço, gostamos de perceber o que te atrai — cores, materiais, luz, atmosfera. Responde a 8 perguntas rápidas e descobre qual dos nossos seis estilos de referência mais se identifica contigo.</p>
+      <div class="meta-row">
+        <span>Perguntas<b>08</b></span>
+        <span>Estilos<b>06</b></span>
+        <span>Duração<b>~2 min</b></span>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">
+        Começar o teste
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+      <button class="link-quiet" onclick="openDashboard()">Ver respostas recebidas (equipa)</button>
+    </section>
+
+    <!-- QUIZ PART 1 -->
+    <section id="quiz" class="screen">
+      <div class="scale" id="scale"></div>
+      <div class="q-index" id="q-index">Pergunta 1 / 8</div>
+      <h2 class="q-text" id="q-text"></h2>
+      <div class="options" id="options"></div>
+      <div class="nav-row">
+        <button class="btn-back" id="back-btn" onclick="goBack()" disabled>&larr; Anterior</button>
+      </div>
+    </section>
+
+    <!-- CONTACT (optional) -->
+    <section id="contact" class="screen">
+      <div class="q-index">Último passo</div>
+      <h2 class="q-text">Como te podemos contactar?</h2>
+      <p class="part2-hint" style="margin-top:0;">Opcional — só usamos isto para te enviarmos o resultado e falarmos sobre o teu projeto.</p>
+      <div class="field">
+        <label>Nome <span class="field-optional">opcional</span></label>
+        <input type="text" id="in-name" placeholder="O teu nome">
+      </div>
+      <div class="field">
+        <label>Email <span class="field-optional">opcional</span></label>
+        <input type="email" id="in-email" placeholder="nome@email.com">
+      </div>
+      <button class="btn-primary" onclick="finishQuiz()">Ver o meu resultado</button>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="screen">
+      <div class="result-eyebrow">O teu estilo é</div>
+      <h2 class="result-title" id="result-title"></h2>
+      <p class="result-desc" id="result-desc"></p>
+
+      <div class="board">
+        <div class="board-label">Amostra de materiais &amp; cores</div>
+        <div class="chips" id="result-chips"></div>
+        <ul class="traits" id="result-traits"></ul>
+      </div>
+
+      <div class="cta-box">
+        <p>Queres ver este estilo aplicado à tua casa? Marca uma primeira conversa online connosco.</p>
+        <p><span class="cta-price">7€ · 30 min · Google Meet</span> — valor deduzido do projeto, caso avances.</p>
+        <a class="btn-cta" href="https://tr.ee/fIsrVTJnwG" target="_blank" rel="noopener">
+          Marcar primeira conversa
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <p class="save-note" id="save-note">As tuas respostas foram guardadas para a nossa equipa.</p>
+      <button class="btn-restart" onclick="restartQuiz()">Refazer o teste</button>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="screen">
+      <div class="q-index">Área da equipa</div>
+      <h2 class="q-text">Respostas recebidas</h2>
+      <div class="dash-table" id="dash-table"></div>
+      <div class="dash-empty" id="dash-empty" style="display:none;">Ainda sem respostas guardadas.</div>
+      <button class="btn-restart" onclick="restartQuiz()">&larr; Voltar ao teste</button>
+    </section>
+
+  </main>
+
+  <footer>Cinco Atelier — Arquitetura &amp; Design de Interiores, Lisboa</footer>
+</div>
+
+<script>
+const STYLES = {
+  minimal: {
+    title: "Minimalista Contemporâneo",
+    desc: "Gostas de espaços limpos, onde cada objeto tem uma função e nada é deixado ao acaso. Preferes linhas retas, superfícies contínuas e uma paleta contida — o luxo está na ausência, não no excesso.",
+    chips: ["#B8B2A6","#E7E3DA","#3A3733","#8C8579"],
+    traits: ["Microcimento","Linhas retas","Paleta neutra","Sem excessos"],
+    wall:"#E7E3DA", floor:"#C9C4B8", accent:"#3A3733", rug:"#8C8579"
+  },
+  escandinavo: {
+    title: "Escandinavo",
+    desc: "Procuras conforto sem pesar o espaço: madeira clara, luz suave e texturas naturais que convidam a abrandar. É um estilo funcional, mas nunca frio — feito para o dia a dia.",
+    chips: ["#E3D5B8","#F4EFE4","#9FB6BE","#6B5A43"],
+    traits: ["Carvalho claro","Luz quente","Têxteis naturais","Funcional"],
+    wall:"#F4EFE4", floor:"#E3D5B8", accent:"#9FB6BE", rug:"#DCCFAE"
+  },
+  industrial: {
+    title: "Industrial",
+    desc: "Não tens medo de mostrar a estrutura: metal, betão à vista, madeira envelhecida. Gostas de espaços com história e carácter, onde o inacabado é, de propósito, o acabamento.",
+    chips: ["#4A4640","#7A756B","#B0987C","#1F1D1B"],
+    traits: ["Betão à vista","Metal preto","Couro envelhecido","Carácter"],
+    wall:"#7A756B", floor:"#4A4640", accent:"#1F1D1B", rug:"#B0987C"
+  },
+  boho: {
+    title: "Boho Natural",
+    desc: "O teu espaço respira: plantas, fibras naturais, tons terrosos e objetos com história de vida própria. Gostas de camadas, de textura, de uma casa que se vai construindo aos poucos.",
+    chips: ["#A9714A","#C9A66B","#7C8355","#E4D8C2"],
+    traits: ["Fibras naturais","Tons terrosos","Plantas","Camadas & textura"],
+    wall:"#E4D8C2", floor:"#C9A66B", accent:"#7C8355", rug:"#A9714A"
+  },
+  classico: {
+    title: "Clássico Atemporal",
+    desc: "Valorizas o que perdura: proporções cuidadas, materiais nobres, um certo formalismo bem-vindo. Preferes investir em peças que não passam de moda a seguir tendências passageiras.",
+    chips: ["#6E2A32","#8B6F47","#D8C9A3","#2E2622"],
+    traits: ["Mármore","Veludo","Proporção clássica","Peças atemporais"],
+    wall:"#D8C9A3", floor:"#8B6F47", accent:"#6E2A32", rug:"#2E2622"
+  },
+  mediterranico: {
+    title: "Mediterrânico",
+    desc: "A tua casa ideal tem luz a entrar por todo o lado, azul e branco cal, cerâmica pintada à mão. Gostas de espaços que convidam a estar de portas abertas, entre dentro e fora.",
+    chips: ["#3B6E8F","#F4EFE2","#D9A441","#7C9A6E"],
+    traits: ["Cal branca","Azulejo pintado","Luz natural","Dentro/fora"],
+    wall:"#F4EFE2", floor:"#D9A441", accent:"#3B6E8F", rug:"#7C9A6E"
+  }
+};
+
+const QUESTIONS = [
+  { text: "Que paleta de cores te atrai mais numa sala?", options: [
+      {label:"Branco, cinza claro, tons neutros", style:"minimal", hex:"#C9C4B8"},
+      {label:"Branco, madeira clara, azul suave", style:"escandinavo", hex:"#DCCFAE"},
+      {label:"Preto, cinza chumbo, metal", style:"industrial", hex:"#4A4640"},
+      {label:"Terracota, verde oliva, tons terrosos", style:"boho", hex:"#A9714A"},
+      {label:"Bege, dourado, bordô", style:"classico", hex:"#6E2A32"},
+      {label:"Azul mediterrânico, branco cal, amarelo sol", style:"mediterranico", hex:"#3B6E8F"}
+  ]},
+  { text: "Material de eleição para o chão?", options: [
+      {label:"Microcimento contínuo", style:"minimal", hex:"#B8B2A6"},
+      {label:"Soalho de carvalho claro", style:"escandinavo", hex:"#E3D5B8"},
+      {label:"Betão à vista ou metal", style:"industrial", hex:"#5A564F"},
+      {label:"Mosaico hidráulico ou fibras naturais", style:"boho", hex:"#C9A66B"},
+      {label:"Mármore ou parquet em espinha", style:"classico", hex:"#D8C9A3"},
+      {label:"Ladrilho de barro ou azulejo pintado", style:"mediterranico", hex:"#D9A441"}
+  ]},
+  { text: "Como imaginas o sofá ideal?", options: [
+      {label:"Linhas retas, uma só cor sólida", style:"minimal", hex:"#8C8579"},
+      {label:"Tecido claro, formas suaves, muitas almofadas", style:"escandinavo", hex:"#F4EFE4"},
+      {label:"Couro envelhecido, estrutura metálica", style:"industrial", hex:"#B0987C"},
+      {label:"Linho cru, franjas, tons quentes", style:"boho", hex:"#C9A66B"},
+      {label:"Veludo, pés torneados, botões capitonê", style:"classico", hex:"#6E2A32"},
+      {label:"Tecido às riscas, cores vivas", style:"mediterranico", hex:"#D9A441"}
+  ]},
+  { text: "Que tipo de iluminação preferes?", options: [
+      {label:"Embutida, discreta, sem enfeites", style:"minimal", hex:"#3A3733"},
+      {label:"Candeeiros de tecido, luz quente e suave", style:"escandinavo", hex:"#E3D5B8"},
+      {label:"Lâmpadas expostas, metal preto", style:"industrial", hex:"#1F1D1B"},
+      {label:"Candeeiros de rattan, luz âmbar", style:"boho", hex:"#A9714A"},
+      {label:"Candeeiro de cristal ou latão trabalhado", style:"classico", hex:"#8B6F47"},
+      {label:"Lanternas de ferro forjado, luz dourada", style:"mediterranico", hex:"#D9A441"}
+  ]},
+  { text: "Na parede, o que colocarias?", options: [
+      {label:"Nada — parede lisa e limpa", style:"minimal", hex:"#E7E3DA"},
+      {label:"Um quadro simples, prateleira em madeira", style:"escandinavo", hex:"#DCCFAE"},
+      {label:"Tijolo à vista ou tubagem exposta", style:"industrial", hex:"#7A756B"},
+      {label:"Têxteis pendurados, plantas suspensas", style:"boho", hex:"#7C8355"},
+      {label:"Moldura de estuque, espelho emoldurado", style:"classico", hex:"#D8C9A3"},
+      {label:"Azulejo decorativo pintado à mão", style:"mediterranico", hex:"#7C9A6E"}
+  ]},
+  { text: "Que elemento natural gostas mais de ter em casa?", options: [
+      {label:"Nenhum — prefiro o espaço vazio", style:"minimal", hex:"#B8B2A6"},
+      {label:"Uma planta verde discreta", style:"escandinavo", hex:"#9FB6BE"},
+      {label:"Cato ou suculenta em vaso de metal", style:"industrial", hex:"#5A564F"},
+      {label:"Muitas plantas, samambaias penduradas", style:"boho", hex:"#7C8355"},
+      {label:"Arranjo floral clássico", style:"classico", hex:"#6E2A32"},
+      {label:"Vaso de barro com ervas aromáticas", style:"mediterranico", hex:"#7C9A6E"}
+  ]},
+  { text: "Se pudesses escolher um cheiro para a tua casa...", options: [
+      {label:"Neutro, sem perfume marcado", style:"minimal", hex:"#E7E3DA"},
+      {label:"Madeira e canela", style:"escandinavo", hex:"#C9A66B"},
+      {label:"Couro e metal", style:"industrial", hex:"#4A4640"},
+      {label:"Incenso e sândalo", style:"boho", hex:"#A9714A"},
+      {label:"Rosa e âmbar", style:"classico", hex:"#8B6F47"},
+      {label:"Sal marinho e citrinos", style:"mediterranico", hex:"#3B6E8F"}
+  ]},
+  { text: "Um domingo perfeito em casa é...", options: [
+      {label:"Organizar e simplificar espaços", style:"minimal", hex:"#3A3733"},
+      {label:"Café quente, cobertor, luz da janela", style:"escandinavo", hex:"#F4EFE4"},
+      {label:"Reparar algo com as mãos, música vintage", style:"industrial", hex:"#1F1D1B"},
+      {label:"Ioga, ervas, amigos a passar por casa", style:"boho", hex:"#7C8355"},
+      {label:"Jantar elegante, mesa bem posta", style:"classico", hex:"#6E2A32"},
+      {label:"Almoço prolongado, portas abertas para o pátio", style:"mediterranico", hex:"#D9A441"}
+  ]}
+];
+
+let current = 0;
+let answers = [];
+
+function buildScale(){
+  const scale = document.getElementById('scale');
+  scale.innerHTML = '';
+  QUESTIONS.forEach((_, i) => {
+    const t = document.createElement('div');
+    t.className = 'tick';
+    t.id = 'tick-' + i;
+    scale.appendChild(t);
+  });
+}
+
+function startQuiz(){
+  current = 0;
+  answers = [];
+  buildScale();
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const labels = { quiz:'Teste de estilo', contact:'Contacto', result:'Resultado', dashboard:'Equipa', intro:'Teste de estilo' };
+  document.getElementById('topbar-progress').textContent = labels[id] || '';
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[current];
+  document.getElementById('q-index').textContent = 'Pergunta ' + (current+1) + ' / ' + QUESTIONS.length;
+  document.getElementById('q-text').textContent = q.text;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.options.forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="swatch" style="background:' + o.hex + '"></span>' +
+                     '<span class="option-text"><b>' + o.label + '</b></span>';
+    btn.onclick = () => selectOption(o.style);
+    opts.appendChild(btn);
+  });
+
+  for(let i=0;i<QUESTIONS.length;i++){
+    document.getElementById('tick-'+i).classList.toggle('done', i < current);
+  }
+  document.getElementById('back-btn').disabled = current === 0;
+}
+
+function selectOption(style){
+  answers[current] = style;
+  if(current < QUESTIONS.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    showScreen('contact');
+  }
+}
+
+function goBack(){
+  if(current > 0){
+    current--;
+    renderQuestion();
+  }
+}
+
+async function finishQuiz(){
+  const name = document.getElementById('in-name').value.trim();
+  const email = document.getElementById('in-email').value.trim();
+
+  const tally = {};
+  answers.forEach(s => tally[s] = (tally[s]||0) + 1);
+  let best = null, bestCount = -1;
+  Object.keys(tally).forEach(k => { if(tally[k] > bestCount){ best = k; bestCount = tally[k]; } });
+
+  const submission = {
+    timestamp: new Date().toISOString(),
+    name: name || null,
+    email: email || null,
+    answers: answers,
+    topStyle: best
+  };
+
+  let saved = true;
+  try{
+    const key = 'submission:' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+    const res = await window.storage.set(key, JSON.stringify(submission), true);
+    if(!res) saved = false;
+  } catch(e){
+    saved = false;
+  }
+
+  try{
+    const respostasTexto = QUESTIONS.map((q, i) =>
+      (i+1) + '. ' + q.text + ' → ' + STYLES[answers[i]].title
+    ).join('\n');
+
+    await fetch('https://formspree.io/f/xnpapowk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Novo resultado do teste de estilo — ' + STYLES[best].title,
+        nome: name || '(não indicado)',
+        email: email || '(não indicado)',
+        estilo_resultante: STYLES[best].title,
+        data: new Date().toLocaleString('pt-PT'),
+        respostas: respostasTexto
+      })
+    });
+  } catch(e){
+    /* envio de email falhou silenciosamente — as respostas continuam guardadas no artefacto */
+  }
+
+  document.getElementById('save-note').textContent = saved
+    ? 'As tuas respostas foram guardadas para a nossa equipa.'
+    : 'Não foi possível guardar as respostas — mas aqui está o teu resultado.';
+
+  showResult(best);
+}
+
+function showResult(best){
+  const s = STYLES[best];
+  document.getElementById('result-title').textContent = s.title;
+  document.getElementById('result-desc').textContent = s.desc;
+
+  const chips = document.getElementById('result-chips');
+  chips.innerHTML = '';
+  s.chips.forEach(hex => {
+    const c = document.createElement('div');
+    c.className = 'chip';
+    c.style.background = hex;
+    chips.appendChild(c);
+  });
+
+  const traits = document.getElementById('result-traits');
+  traits.innerHTML = '';
+  s.traits.forEach(t => {
+    const li = document.createElement('li');
+    li.textContent = t;
+    traits.appendChild(li);
+  });
+
+  showScreen('result');
+}
+
+function restartQuiz(){
+  showScreen('intro');
+}
+
+async function openDashboard(){
+  const table = document.getElementById('dash-table');
+  const empty = document.getElementById('dash-empty');
+  table.innerHTML = '';
+  empty.style.display = 'none';
+
+  try{
+    const listRes = await window.storage.list('submission:', true);
+    const keys = (listRes && listRes.keys) ? listRes.keys : [];
+    if(keys.length === 0){
+      empty.style.display = 'block';
+    } else {
+      const items = [];
+      for(const k of keys){
+        try{
+          const r = await window.storage.get(k, true);
+          if(r && r.value) items.push(JSON.parse(r.value));
+        } catch(e){ /* skip unreadable entry */ }
+      }
+      items.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+      items.forEach(sub => {
+        const row = document.createElement('div');
+        row.className = 'dash-row';
+        const styleTitle = STYLES[sub.topStyle] ? STYLES[sub.topStyle].title : sub.topStyle;
+        const date = new Date(sub.timestamp).toLocaleString('pt-PT');
+        row.innerHTML =
+          '<div class="dash-top"><b>' + (sub.name || 'Sem nome') + '</b><span class="dash-meta">' + date + '</span></div>' +
+          '<div>' + styleTitle + (sub.email ? ' · ' + sub.email : '') + '</div>';
+        table.appendChild(row);
+      });
+    }
+  } catch(e){
+    empty.style.display = 'block';
+    empty.textContent = 'Não foi possível carregar as respostas.';
+  }
+
+  showScreen('dashboard');
+}
+</script>
+</body>
+</html>
