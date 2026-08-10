@@ -260,7 +260,16 @@
   }
   .field input:focus-visible{ outline:2px solid var(--clay); }
   .field input::placeholder{ color:var(--text-soft); opacity:1; }
+  .field input.invalid{ outline:1.5px solid var(--clay); }
   .field-optional{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--muted); margin-left:6px; text-transform:none; letter-spacing:0; }
+  .field-error{
+    display:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    color:var(--clay);
+    margin-top:6px;
+  }
+  .field-error.show{ display:block; }
 
   /* ---- RESULT ---- */
   .result-eyebrow{
@@ -383,18 +392,20 @@
       </div>
     </section>
 
-    <!-- CONTACT (optional) -->
+    <!-- CONTACT (required) -->
     <section id="contact" class="screen">
       <div class="q-index">Último passo</div>
       <h2 class="q-text">Como te podemos contactar?</h2>
-      <p class="part2-hint" style="margin-top:0;">Opcional — só usamos isto para te enviarmos o resultado e falarmos sobre o teu projeto.</p>
+      <p class="part2-hint" style="margin-top:0;">Usamos isto para te enviarmos o resultado e falarmos sobre o teu projeto.</p>
       <div class="field">
-        <label>Nome <span class="field-optional">opcional</span></label>
-        <input type="text" id="in-name" placeholder="O teu nome">
+        <label>Nome</label>
+        <input type="text" id="in-name" placeholder="O teu nome" required>
+        <span class="field-error" id="err-name">Preenche o teu nome para continuar.</span>
       </div>
       <div class="field">
-        <label>Email <span class="field-optional">opcional</span></label>
-        <input type="email" id="in-email" placeholder="nome@email.com">
+        <label>Email</label>
+        <input type="email" id="in-email" placeholder="nome@email.com" required>
+        <span class="field-error" id="err-email">Indica um email válido para continuar.</span>
       </div>
       <button class="btn-primary" onclick="finishQuiz()">Ver o meu resultado</button>
     </section>
@@ -620,8 +631,33 @@ function goBack(){
 }
 
 async function finishQuiz(){
-  const name = document.getElementById('in-name').value.trim();
-  const email = document.getElementById('in-email').value.trim();
+  const nameInput = document.getElementById('in-name');
+  const emailInput = document.getElementById('in-email');
+  const name = nameInput.value.trim();
+  const email = emailInput.value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  let valid = true;
+  if(!name){
+    nameInput.classList.add('invalid');
+    document.getElementById('err-name').classList.add('show');
+    valid = false;
+  } else {
+    nameInput.classList.remove('invalid');
+    document.getElementById('err-name').classList.remove('show');
+  }
+  if(!emailOk){
+    emailInput.classList.add('invalid');
+    document.getElementById('err-email').classList.add('show');
+    valid = false;
+  } else {
+    emailInput.classList.remove('invalid');
+    document.getElementById('err-email').classList.remove('show');
+  }
+  if(!valid){
+    (name ? emailInput : nameInput).focus();
+    return;
+  }
 
   const tally = {};
   answers.forEach(s => tally[s] = (tally[s]||0) + 1);
